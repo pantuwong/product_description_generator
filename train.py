@@ -40,14 +40,16 @@ gc.collect()
 
 torch.cuda.empty_cache()
 
-training_args = TrainingArguments(output_dir='./results', num_train_epochs=7, logging_steps=100, save_steps=50000,
+training_args = TrainingArguments(output_dir='./results', num_train_epochs=12, logging_steps=100, save_steps=50000,
                                   per_device_train_batch_size=1, per_device_eval_batch_size=1,
                                   warmup_steps=10, weight_decay=0.05, logging_dir='./logs', report_to = 'none')
 
-Trainer(model=model,  args=training_args, train_dataset=train_dataset, 
+trainer = Trainer(model=model,  args=training_args, train_dataset=train_dataset, 
         eval_dataset=val_dataset, data_collator=lambda data: {'input_ids': torch.stack([f[0] for f in data]),
                                                               'attention_mask': torch.stack([f[1] for f in data]),
-                                                              'labels': torch.stack([f[0] for f in data])}).train(resume_from_checkpoint = './results/checkpoint-200000')
+                                                              'labels': torch.stack([f[0] for f in data])})
 
+trainer.train(resume_from_checkpoint = './results/checkpoint-500000')
+trainer.save_model('./results')
 
 
